@@ -1,0 +1,25 @@
+<html>
+    <head>
+	<title>AWS S3 Streaming with JW Player 7</title>
+
+	<script type='text/javascript' src='https://s3.amazonaws.com/isaac-wfth/jwplayer.js'></script>
+	<script type='text/javascript' src='https://s3.amazonaws.com/isaac-wfth/jwplayer.flash.swf'></script>
+	<script>jwplayer.key="SZSxh+F01tVWCH6Xkg3BkjqTuxz0xUbxWSIrJQ==";</script>
+
+    </head>
+
+    <body>
+	<h1>This sermon is streamed from AWS S3 and played by JW Player 7.</h1>
+
+	<div id="sermon"></div>
+	<script type="text/javascript">
+	 jwplayer("sermon").setup({
+	     file: "https://s3.amazonaws.com/isaac-wfth/book-of-beginnings.mp3",
+	     width: "720",
+	     height: "40",
+	     primary: "flash"
+	 });
+	</script>
+
+    </body>
+</html>
