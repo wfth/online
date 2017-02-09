@@ -9,6 +9,7 @@
         <h1>Upload sermon audio.</h1>
 
         <input type="file" id="fileinput" accept="audio/*"/><br>
+	<button id="remove-button">Remove File</button><br>
 	<button id="upload-button">Upload</button>
 
         <script type="text/javascript">
@@ -22,9 +23,10 @@
 	     secretAccessKey: 'f5wwNFmS8smv1MgLNC6/VSS6Vnnf+RIemqyttOyt'
 	 })
 	 var fileInput = document.getElementById('fileinput');
-	 var button = document.getElementById('upload-button');
+	 var uploadButton = document.getElementById('upload-button');
+	 var removeButton = document.getElementById('remove-button');
 
-	 button.addEventListener('click', function() {
+	 uploadButton.addEventListener('click', function() {
 	     var file = fileInput.files[0];
 	     if (file) {
 		 var params = { Key: file.name, ContentType: file.type, Body: file, ACL: 'public-read' }
@@ -38,6 +40,10 @@
 	     } else {
 		 console.log("No file selected.");
 	     }
+	 }, false);
+
+	 removeButton.addEventListener('click', function() {
+	     fileInput.value = "";
 	 }, false);
 
          document.getElementById('fileinput').addEventListener('change', function() {
