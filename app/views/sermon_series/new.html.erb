@@ -1,7 +1,7 @@
 <html>
     <head>
 	<script src="https://sdk.amazonaws.com/js/aws-sdk-2.1.12.min.js"></script>
-	<script src="uploader.js"></script>
+	<%= javascript_include_tag "sermon_series" %>
     </head>
 
     <body>
@@ -11,19 +11,7 @@
 	<button id="add-audio-uploader-button">Add another audio uploader</button>
 
 	<script type="text/javascript">
-	 var credsString = readFile("creds.txt");
-         var credsArr = credsString.split(",");
-
-	 AWS.config.region = 'us-east-1';
-         var bucket = new AWS.S3({
-             params: {
-                 Bucket: 'isaac-wfth'
-             },
-             accessKeyId: credsArr[0],
-             secretAccessKey: credsArr[1]
-         });
-
-	 document.getElementById('add-audio-uploader-button').addEventListener('click', function () {
+	  document.getElementById('add-audio-uploader-button').addEventListener('click', function () {
 	     var uploader = new AudioUploader;
 
 	     uploader.removalButton.addEventListener('click', function() {
