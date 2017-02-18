@@ -18,7 +18,7 @@ function AudioUploader () {
   }
 }
 
-var element = function (type, id, text = null) {
+var element = function (type, id, text) {
   var el = document.createElement(type);
   el.id = id;
   if (text != null) {
