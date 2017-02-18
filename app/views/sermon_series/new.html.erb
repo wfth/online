@@ -1,40 +1,38 @@
 <html>
-    <head>
-	<script src="https://sdk.amazonaws.com/js/aws-sdk-2.1.12.min.js"></script>
-	<%= javascript_include_tag "sermon_series" %>
-    </head>
+  <head>
+    <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1.12.min.js"></script>
+    <%= javascript_include_tag "sermon_series" %>
+  </head>
 
-    <body>
-	<div id="audio-uploaders">
-	</div>
+  <body>
+    <div id="audio-uploaders"></div>
 
-	<button id="add-audio-uploader-button">Add another audio uploader</button>
+    <button id="add-audio-uploader-button">Add another audio uploader</button>
 
-	<script type="text/javascript">
-	  document.getElementById('add-audio-uploader-button').addEventListener('click', function () {
-	     var uploader = new AudioUploader;
+    <script type="text/javascript">
+      document.getElementById('add-audio-uploader-button').addEventListener('click', function () {
+        var uploader = new AudioUploader;
+        uploader.removalButton.addEventListener('click', function() {
+          uploader.input.value = "";
+        }, false);
 
-	     uploader.removalButton.addEventListener('click', function() {
-		 uploader.input.value = "";
-	     }, false);
-
-	     uploader.uploadButton.addEventListener('click', function() {
-		 var file = uploader.input.files[0];
-		 if (file) {
-                     uploader.resultsParagraph.innerHTML = "Uploading...";
-                     var params = { Key: file.name, ContentType: file.type, Body: file, ACL: 'public-read' }
-                     bucket.putObject(params, function(err, data) {
-			 if (err) {
-                             uploader.resultsParagraph.innerHTML = err;
-			 } else {
-                             uploader.resultsParagraph.innerHTML = "File successfully uploaded";
-			 }
-                     })
-		 } else {
-                     uploader.resultsParagraph.innerHTML = "No file selected";
-		 }
-	     }, false);
-	 }, false);
-	</script>
-    </body>
+        uploader.uploadButton.addEventListener('click', function() {
+          var file = uploader.input.files[0];
+          if (file) {
+            uploader.resultsParagraph.innerHTML = "Uploading...";
+            var params = { Key: file.name, ContentType: file.type, Body: file, ACL: 'public-read' }
+            bucket.putObject(params, function(err, data) {
+              if (err) {
+                uploader.resultsParagraph.innerHTML = err;
+              } else {
+                uploader.resultsParagraph.innerHTML = "File successfully uploaded";
+              }
+            })
+          } else {
+            uploader.resultsParagraph.innerHTML = "No file selected";
+          }
+        }, false);
+      }, false);
+    </script>
+  </body>
 </html>
