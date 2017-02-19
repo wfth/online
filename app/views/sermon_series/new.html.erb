@@ -1,38 +1,37 @@
-<html>
-  <head>
-    <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1.12.min.js"></script>
-    <%= javascript_include_tag "sermon_series" %>
-  </head>
+<form enctype="multipart/form-data">
+  <input name="sermon_audios[]" type="file" accept="audio/*" multiple="true" />
+  <input type="button" value="Upload" />
+</form>
+<progress value="0"></progress>
 
-  <body>
-    <div id="audio-uploaders"></div>
+<script type="text/javascript">
+  $(':file').on('change', function() {
+    var file = this.files[0];
+    console.log(file.name);
+  });
 
-    <button id="add-audio-uploader-button">Add another audio uploader</button>
-
-    <script type="text/javascript">
-      document.getElementById('add-audio-uploader-button').addEventListener('click', function () {
-        var uploader = new AudioUploader;
-        uploader.removalButton.addEventListener('click', function() {
-          uploader.input.value = "";
-        }, false);
-
-        uploader.uploadButton.addEventListener('click', function() {
-          var file = uploader.input.files[0];
-          if (file) {
-            uploader.resultsParagraph.innerHTML = "Uploading...";
-            var params = { Key: file.name, ContentType: file.type, Body: file, ACL: 'public-read' }
-            bucket.putObject(params, function(err, data) {
-              if (err) {
-                uploader.resultsParagraph.innerHTML = err;
-              } else {
-                uploader.resultsParagraph.innerHTML = "File successfully uploaded";
-              }
-            })
-          } else {
-            uploader.resultsParagraph.innerHTML = "No file selected";
-          }
-        }, false);
-      }, false);
-    </script>
-  </body>
-</html>
+  $(':button').on('click', function() {
+    $.ajax({
+      url: 'upload',
+      type: 'POST',
+      cache: false,
+      contentType: false,
+      processData: false,
+      data: new FormData($('form')[0]),
+      xhr: function() {
+        var myXhr = $.ajaxSettings.xhr();
+        if (myXhr.upload) {
+          myXhr.upload.addEventListener('progress', function(e) {
+            if (e.lengthComputable) {
+              $('progress').attr({
+                value: e.loaded,
+                max: e.total,
+              });
+            }
+          } , false);
+        }
+        return myXhr;
+      }
+    });
+  });
+</script>
