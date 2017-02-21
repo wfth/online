@@ -1,39 +1,50 @@
+<h2>Add a sermon</h2>
+
 <form enctype="multipart/form-data">
-  <input name="sermon_audios[]" type="file" accept="audio/*" multiple="true" />
-  <input type="button" value="Upload" />
+  <input name="sermon_audios[]" type="file" id="fileinput" multiple="true" />
+  <div><input type="button" value="Upload" /></div>
 </form>
 <progress value="0"></progress>
 
 <script type="text/javascript">
-  AWS.config = new AWS.Config({
-    region: '<%= Aws.config[:region] %>',
-    accessKeyId: '<%= @aws_credentials.access_key_id %>',
-    secretAccessKey: '<%= @aws_credentials.secret_access_key %>',
-    sessionToken: '<%= @aws_credentials.session_token %>',
-    expireTime: '<%= @aws_credentials.expiration %>'
-  });
+ AWS.config = new AWS.Config({
+   region: '<%= Aws.config[:region] %>',
+   accessKeyId: '<%= @aws_credentials.access_key_id %>',
+   secretAccessKey: '<%= @aws_credentials.secret_access_key %>',
+   sessionToken: '<%= @aws_credentials.session_token %>',
+   expireTime: '<%= @aws_credentials.expiration %>'
+ });
 
-  $(':button').on('click', function() {
-    var file = $(':file')[0].files[0]; // TODO: Process all files
-    if (file) {
-      var upload = new AWS.S3.ManagedUpload({
-        params: {
-          Bucket: '<%= @aws_bucket %>',
-          Key: file.name,
-          Body: file,
-          ContentType: file.type,
-          ACL: 'public-read'
-        }});
-      upload.on('httpUploadProgress', function (progress) {
-        console.log(progress);
-        $('progress').attr({
-          value: progress.loaded,
-          max: progress.total,
-        });
-      });
-      upload.send();
-    } else {
-      alert("No file selected!");
-    }
-  });
+ $(':button').on('click', function() {
+   var fileInput = document.getElementById('fileinput');
+   if (fileInput.files.length <= 0) {
+     alert("No files selected!");
+     return;
+   }
+
+   console.log(fileInput.files.length);
+   for (i = 0; i < fileInput.files.length; i++) {
+     console.log("inside");
+     var file = fileInput.files[i];
+
+     var upload = new AWS.S3.ManagedUpload({
+       params: {
+         Bucket: '<%= @aws_bucket %>',
+         Key: file.name,
+         Body: file,
+         ContentType: file.type,
+         ACL: 'public-read'
+       }});
+
+     upload.on('httpUploadProgress', function (progress) {
+       console.log(progress);
+       $('progress').attr({
+         value: progress.loaded,
+         max: progress.total,
+       });
+     });
+
+     upload.send();
+   }
+ });
 </script>
