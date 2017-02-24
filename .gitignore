@@ -19,3 +19,9 @@
 
 # Ignore Byebug command history file.
 .byebug_history
+
+# Ignore the REAL database.yml
+database.yml
+
+# Ignore Emacs speshul files
+*~
