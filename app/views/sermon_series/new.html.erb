@@ -7,11 +7,7 @@
       <span class="custom-file-control"></span>
     </label>
   </div>
-  <div class="form-group">
-    <label id="current-file-label">Current file</label>
-    <div class="progress" style="width:25%">
-      <div id="progress" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width:0%"></div>
-    </div>
+  <div class="form-group" id="show">
   </div>
   <button type="button" class="btn btn-primary">Save</button>
 </form>
@@ -25,6 +21,27 @@
    expireTime: '<%= @aws_credentials.expiration %>'
  });
 
+ function createManagedUpload(file) {
+   var upload = new AWS.S3.ManagedUpload({
+     params: {
+       Bucket: '<%= @aws_bucket %>',
+       Key: file.name,
+       Body: file,
+       ContentType: file.type,
+       ACL: 'public-read'
+     }});
+
+   upload.on('httpUploadProgress', function (progress) {
+     if (file.type == "audio/mpeg") {
+       $('#audio-progress').width((progress.loaded / progress.total)*100 + "%");
+     } else if (file.type == "application/pdf") {
+       $('#transcript-progress').width((progress.loaded / progress.total)*100 + "%");
+     }
+   });
+
+   return upload;
+ }
+
  $(':button').on('click', function() {
    var fileInput = document.getElementById('file');
    if (fileInput.files.length <= 0) {
@@ -34,22 +51,19 @@
 
    for (i = 0; i < fileInput.files.length; i++) {
      var file = fileInput.files[i];
-     $('#current-file-label').html(file.name);
+     show(file);
 
-     var upload = new AWS.S3.ManagedUpload({
-       params: {
-         Bucket: '<%= @aws_bucket %>',
-         Key: file.name,
-         Body: file,
-         ContentType: file.type,
-         ACL: 'public-read'
-       }});
-
-     upload.on('httpUploadProgress', function (progress) {
-       $('#progress').width((progress.loaded / progress.total)*100 + "%");
-     });
+     upload = createManagedUpload(file);
 
      upload.send();
    }
  });
+
+ function show(file) {
+   if (file.type == "audio/mpeg") {
+     $("#show").append("<div><h2>Sermon Audio</h2><div class='progress' style='width:25%'><div id='audio-progress' class='progress-bar progress-bar-striped progress-bar-animated' role='progressbar' style='width:0%'></div></div></div>");
+   } else if (file.type == "application/pdf") {
+     $("#show").append("<div><h2>Sermon Transcript</h2><div class='progress' style='width:25%'><div id='transcript-progress' class='progress-bar progress-bar-striped progress-bar-animated' role='progressbar' style='width:0%'></div></div></div>");
+   }
+ }
 </script>
