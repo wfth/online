@@ -2,14 +2,30 @@
 
 <form enctype="multipart/form-data">
   <div class="form-group">
-    <label class="custom-file">
-      <input type="file" id="file" multiple="true" class="custom-file-input">
-      <span class="custom-file-control"></span>
+    <h4>Audio</h4>
+    <label class="btn btn-primary">
+      <input id="audio-file" type="file" style="display:none" onchange="$('#audio-file-selected').html($(this).val());">
+      Browse..
     </label>
+    <span class="label label-info" id="audio-file-selected"></span>
   </div>
-  <div class="form-group" id="show">
+
+  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#uploadModal">Save</button>
+
+  <div class="modal fade" data-backdrop="static" id="uploadModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="uploadModalLabel">Uploading blablabla.mp3...</h5>
+        </div>
+        <div class="modal-body">
+          <div class="progress" style="width:100%">
+            <div id="progress" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width:0%"></div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-  <button type="button" class="btn btn-primary">Save</button>
 </form>
 
 <script type="text/javascript">
@@ -32,10 +48,9 @@
      }});
 
    upload.on('httpUploadProgress', function (progress) {
-     if (file.type == "audio/mpeg") {
-       $('#audio-progress').width((progress.loaded / progress.total)*100 + "%");
-     } else if (file.type == "application/pdf") {
-       $('#transcript-progress').width((progress.loaded / progress.total)*100 + "%");
+     $('#progress').width((progress.loaded / progress.total)*100 + "%");
+     if ((progress.loaded / progress.total) == 1) {
+       $('#uploadModal').modal('hide');
      }
    });
 
@@ -43,7 +58,7 @@
  }
 
  $(':button').on('click', function() {
-   var fileInput = document.getElementById('file');
+   var fileInput = document.getElementById('audio-file');
    if (fileInput.files.length <= 0) {
      alert("No files selected!");
      return;
@@ -51,19 +66,8 @@
 
    for (i = 0; i < fileInput.files.length; i++) {
      var file = fileInput.files[i];
-     show(file);
-
      upload = createManagedUpload(file);
-
      upload.send();
    }
  });
-
- function show(file) {
-   if (file.type == "audio/mpeg") {
-     $("#show").append("<div><h2>Sermon Audio</h2><div class='progress' style='width:25%'><div id='audio-progress' class='progress-bar progress-bar-striped progress-bar-animated' role='progressbar' style='width:0%'></div></div></div>");
-   } else if (file.type == "application/pdf") {
-     $("#show").append("<div><h2>Sermon Transcript</h2><div class='progress' style='width:25%'><div id='transcript-progress' class='progress-bar progress-bar-striped progress-bar-animated' role='progressbar' style='width:0%'></div></div></div>");
-   }
- }
 </script>
