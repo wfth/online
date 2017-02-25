@@ -1,14 +1,21 @@
 class SermonSeriesController < ApplicationController
-  def new
-    resp = Aws::STS::Client.new.get_session_token(duration_seconds: 3600)
-    @aws_credentials = resp.credentials
-    @aws_bucket = "wisdomonline-#{ENV['RAILS_ENV']}"
+  def index
+    @sermon_series = SermonSeries.all
   end
 
-  # Receives sermon audio files
-  def upload
-    params[:sermon_audios].each do |audio|
-      logger.info(audio.original_filename)
-    end
+  def new
+    @sermon_series = SermonSeries.new(title: "Your New Series", released_on: Date.today, description: "Describe the series")
+  end
+
+  def create
+    @sermon_series = SermonSeries.create(
+      params.require(:sermon_series).permit(:title, :relased_on, :description)
+    )
+    redirect_to action: "index"
+  end
+
+  def destroy
+    SermonSeries.find(params[:id]).destroy
+    redirect_to action: "index"
   end
 end

@@ -1,0 +1,2 @@
+class SermonSeries < ApplicationRecord
+end
