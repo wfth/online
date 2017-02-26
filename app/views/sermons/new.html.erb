@@ -1,32 +1,36 @@
-<h2>Add a sermon</h2>
+<h2><%= @sermon.sermon_series.title %></h2>
+<h4>Add a sermon</h4>
+
+<%= form_for @sermon, url: sermon_series_sermons_path(@sermon.sermon_series) do |f| %>
+  <%= f.text_field :title %>
+  <%= f.text_area :description, size: "60x12" %>
+<% end %>
 
 <form enctype="multipart/form-data">
   <div class="form-group">
-    <h4>Audio</h4>
     <label class="btn btn-primary">
       <input id="audio-file" type="file" accept="audio/*" style="display:none" onchange="$('#audio-file-selected').html($(this).val().replace('C:\\fakepath\\', ''));">
-      Browse..
+      Choose audio file...
     </label>
     <span class="label label-info" id="audio-file-selected"></span>
   </div>
-
   <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#uploadModal">Save</button>
+</form>
 
-  <div class="modal fade" data-backdrop="static" id="uploadModal" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="uploadModalLabel">Uploading blablabla.mp3...</h5>
-        </div>
-        <div class="modal-body">
-          <div class="progress" style="width:100%">
-            <div id="progress" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width:0%"></div>
-          </div>
+<div class="modal fade" data-backdrop="static" id="uploadModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="uploadModalLabel"></h5>
+      </div>
+      <div class="modal-body">
+        <div class="progress" style="width:100%">
+          <div id="progress" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width:0%"></div>
         </div>
       </div>
     </div>
   </div>
-</form>
+</div>
 
 <script type="text/javascript">
  AWS.config = new AWS.Config({
@@ -60,7 +64,6 @@
  $(':button').on('click', function() {
    var fileInput = document.getElementById('audio-file');
    if (fileInput.files.length <= 0) {
-     alert("No files selected!");
      return;
    }
 

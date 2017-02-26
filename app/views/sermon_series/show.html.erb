@@ -1,0 +1,5 @@
+<h2><%= @sermon_series.title %></h2>
+<p>Released: <%= @sermon_series.released_on %></p>
+<p><%= @sermon_series.description %></p>
+<ol><%= render @sermon_series.sermons %></ol>
+<%= link_to "Add", new_sermon_series_sermon_path(@sermon_series) %>
