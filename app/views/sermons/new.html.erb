@@ -70,7 +70,11 @@
    for (i = 0; i < fileInput.files.length; i++) {
      var file = fileInput.files[i];
      upload = createManagedUpload(file);
-     upload.send();
+     upload.send(function(err, data) {
+       if (err == null) {
+         $('#new_sermon').submit();
+       }
+     });
    }
  });
 </script>

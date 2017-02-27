@@ -11,6 +11,14 @@ class SermonsController < ApplicationController
   end
 
   def create
+    sermon_series = SermonSeries.find(params[:sermon_series_id])
+    @sermon = sermon_series.sermons.create(sermon_params)
+    redirect_to sermon_series_index_path
+  end
 
+  private
+
+  def sermon_params
+    params.require(:sermon).permit(:title, :description)
   end
 end
