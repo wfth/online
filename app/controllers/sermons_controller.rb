@@ -13,7 +13,12 @@ class SermonsController < ApplicationController
   def create
     sermon_series = SermonSeries.find(params[:sermon_series_id])
     @sermon = sermon_series.sermons.create(sermon_params)
-    redirect_to sermon_series_index_path
+    redirect_to sermon_series_path(sermon_series.id)
+  end
+
+  def destroy
+    Sermon.find(params[:id]).destroy
+    redirect_back(fallback_location: sermon_series_index_path)
   end
 
   private

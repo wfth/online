@@ -1,1 +1,3 @@
-<li><%= sermon.title %></li>
+<li>
+  <%= sermon.title %> <%= link_to "delete", sermon, method: :delete %>
+</li>
