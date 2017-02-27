@@ -13,6 +13,11 @@
       Choose audio file...
     </label>
     <span class="label label-info" id="audio-file-selected"></span>
+    <label class="btn btn-primary">
+      <input id="transcript-file" type="file" accept="application/pdf" style="display:none" onchange="$('#transcript-file-selected').html($(this).val().replace('C:\\fakepath\\', ''));">
+      Choose transcript file...
+    </label>
+    <span class="label label-info" id="transcript-file-selected"></span>
   </div>
   <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#uploadModal">Save</button>
 </form>
@@ -53,28 +58,26 @@
 
    upload.on('httpUploadProgress', function (progress) {
      $('#progress').width((progress.loaded / progress.total)*100 + "%");
-     if ((progress.loaded / progress.total) == 1) {
-       $('#uploadModal').modal('hide');
-     }
    });
 
    return upload;
  }
 
  $(':button').on('click', function() {
-   var fileInput = document.getElementById('audio-file');
-   if (fileInput.files.length <= 0) {
+   var audioInput = document.getElementById('audio-file');
+   var transcriptInput = document.getElementById('transcript-file');
+   if (audioInput.files.length <= 0 || transcriptInput.files.length <= 0) {
      return;
    }
 
-   for (i = 0; i < fileInput.files.length; i++) {
-     var file = fileInput.files[i];
-     upload = createManagedUpload(file);
-     upload.send(function(err, data) {
-       if (err == null) {
-         $('#new_sermon').submit();
-       }
+   var audioUpload = createManagedUpload(audioInput.files[0]);
+   var transcriptUpload = createManagedUpload(transcriptInput.files[0]);
+
+   audioUpload.send(function (err, data) {
+     transcriptUpload.send(function (err, data) {
+       $('#uploadModal').modal('hide');
+       $('#new_sermon').submit();
      });
-   }
+   });
  });
 </script>
