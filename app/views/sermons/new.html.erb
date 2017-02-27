@@ -57,6 +57,7 @@
      }});
 
    upload.on('httpUploadProgress', function (progress) {
+     $('#uploadModalLabel').html(file.name);
      $('#progress').width((progress.loaded / progress.total)*100 + "%");
    });
 
