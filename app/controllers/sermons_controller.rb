@@ -24,6 +24,6 @@ class SermonsController < ApplicationController
   private
 
   def sermon_params
-    params.require(:sermon).permit(:title, :description, :audio_key, :transcript_key)
+    params.require(:sermon).permit(:title, :description, :uuid, :audio_key, :transcript_key)
   end
 end
