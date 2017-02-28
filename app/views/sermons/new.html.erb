@@ -4,6 +4,8 @@
 <%= form_for @sermon, url: sermon_series_sermons_path(@sermon.sermon_series) do |f| %>
   <%= f.text_field :title %>
   <%= f.text_area :description, size: "60x12" %>
+  <%= f.hidden_field :audio_key %>
+  <%= f.hidden_field :transcript_key %>
 <% end %>
 
 <form enctype="multipart/form-data">
@@ -19,8 +21,9 @@
     </label>
     <span class="label label-info" id="transcript-file-selected"></span>
   </div>
-  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#uploadModal">Save</button>
 </form>
+
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#uploadModal">Save</button>
 
 <div class="modal fade" data-backdrop="static" id="uploadModal" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">
@@ -50,7 +53,7 @@
    var upload = new AWS.S3.ManagedUpload({
      params: {
        Bucket: '<%= @aws_bucket %>',
-       Key: file.name,
+       Key: 'sermons/<%= @sermon.uuid %>/' + file.name,
        Body: file,
        ContentType: file.type,
        ACL: 'public-read'
@@ -64,7 +67,7 @@
    return upload;
  }
 
- $(':button').on('click', function() {
+ $(':button').on('click', function(event) {
    var audioInput = document.getElementById('audio-file');
    var transcriptInput = document.getElementById('transcript-file');
    if (audioInput.files.length <= 0 || transcriptInput.files.length <= 0) {
@@ -74,8 +77,10 @@
    var audioUpload = createManagedUpload(audioInput.files[0]);
    var transcriptUpload = createManagedUpload(transcriptInput.files[0]);
 
-   audioUpload.send(function (err, data) {
-     transcriptUpload.send(function (err, data) {
+   audioUpload.send(function (err, audioData) {
+     /* $('#sermon_audio_key').val(audioData.Key);*/
+     transcriptUpload.send(function (err, transcriptData) {
+       /* $('#sermon_transcript_key').val(transcriptData.Key);*/
        $('#uploadModal').modal('hide');
        $('#new_sermon').submit();
      });
