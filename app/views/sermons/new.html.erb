@@ -44,6 +44,11 @@
 </div>
 
 <script type="text/javascript">
+  if (typeof AWS === 'undefined') {
+    alert("S3 is down!");
+    window.history.back();
+  }
+
   AWS.config = new AWS.Config({
     region: '<%= Aws.config[:region] %>',
     accessKeyId: '<%= @aws_credentials.access_key_id %>',
