@@ -44,49 +44,49 @@
 </div>
 
 <script type="text/javascript">
- AWS.config = new AWS.Config({
-   region: '<%= Aws.config[:region] %>',
-   accessKeyId: '<%= @aws_credentials.access_key_id %>',
-   secretAccessKey: '<%= @aws_credentials.secret_access_key %>',
-   sessionToken: '<%= @aws_credentials.session_token %>',
-   expireTime: '<%= @aws_credentials.expiration %>'
- });
+  AWS.config = new AWS.Config({
+    region: '<%= Aws.config[:region] %>',
+    accessKeyId: '<%= @aws_credentials.access_key_id %>',
+    secretAccessKey: '<%= @aws_credentials.secret_access_key %>',
+    sessionToken: '<%= @aws_credentials.session_token %>',
+    expireTime: '<%= @aws_credentials.expiration %>'
+  });
 
- function createManagedUpload(file) {
-   var upload = new AWS.S3.ManagedUpload({
-     params: {
-       Bucket: '<%= @aws_bucket %>',
-       Key: 'sermons/<%= @sermon.uuid %>/' + file.name,
-       Body: file,
-       ContentType: file.type,
-       ACL: 'public-read'
-     }});
+  function createManagedUpload(file) {
+    var upload = new AWS.S3.ManagedUpload({
+      params: {
+        Bucket: '<%= @aws_bucket %>',
+        Key: 'sermons/<%= @sermon.uuid %>/' + file.name,
+        Body: file,
+        ContentType: file.type,
+        ACL: 'public-read'
+      }});
 
-   upload.on('httpUploadProgress', function (progress) {
-     $('#uploadModalLabel').html(file.name);
-     $('#progress').width((progress.loaded / progress.total)*100 + "%");
-   });
+    upload.on('httpUploadProgress', function (progress) {
+      $('#uploadModalLabel').html(file.name);
+      $('#progress').width((progress.loaded / progress.total)*100 + "%");
+    });
 
-   return upload;
- }
+    return upload;
+  }
 
- $(':button').on('click', function(event) {
-   var audioInput = document.getElementById('audio-file');
-   var transcriptInput = document.getElementById('transcript-file');
-   if (audioInput.files.length <= 0 || transcriptInput.files.length <= 0) {
-     return;
-   }
+  $(':button').on('click', function(event) {
+    var audioInput = document.getElementById('audio-file');
+    var transcriptInput = document.getElementById('transcript-file');
+    if (audioInput.files.length <= 0 || transcriptInput.files.length <= 0) {
+      return;
+    }
 
-   var audioUpload = createManagedUpload(audioInput.files[0]);
-   var transcriptUpload = createManagedUpload(transcriptInput.files[0]);
+    var audioUpload = createManagedUpload(audioInput.files[0]);
+    var transcriptUpload = createManagedUpload(transcriptInput.files[0]);
 
-   audioUpload.send(function (err, audioData) {
-     $('#sermon_audio_key').val(audioData.Key);
-     transcriptUpload.send(function (err, transcriptData) {
-       $('#sermon_transcript_key').val(transcriptData.Key);
-       $('#uploadModal').modal('hide');
-       $('#new_sermon').submit();
-     });
-   });
- });
+    audioUpload.send(function (err, audioData) {
+      $('#sermon_audio_key').val(audioData.Key);
+      transcriptUpload.send(function (err, transcriptData) {
+        $('#sermon_transcript_key').val(transcriptData.Key);
+        $('#uploadModal').modal('hide');
+        $('#new_sermon').submit();
+      });
+    });
+  });
 </script>
