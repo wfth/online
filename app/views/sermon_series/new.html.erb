@@ -4,5 +4,73 @@
   <%= f.text_field :title %>
   <%= f.text_field :released_on %>
   <%= f.text_area :description, size: "60x12" %>
-  <%= f.submit "Create" %>
+  <%= f.hidden_field :graphic_key %>
 <% end %>
+
+<form enctype="multipart/form-data">
+  <div class="form-group">
+    <label class="btn btn-primary">
+      <input id="graphic-file" type="file" accept="image/*" style="display:none" onchange="$('#graphic-file-selected').html($(this).val().replace('C:\\fakepath\\', ''));">
+      Choose graphic file...
+    </label>
+    <span class="label label-info" id="graphic-file-selected"></span>
+  </div>
+</form>
+
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#uploadModal">Add</button>
+
+<div class="modal fade" data-backdrop="static" id="uploadModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="uploadModalLabel">Uploading graphic...</h5>
+      </div>
+      <div class="modal-body">
+        <div class="progress" style="width:100%">
+          <div id="progress" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width:0%"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+  AWS.config = new AWS.Config({
+    region: '<%= Aws.config[:region] %>',
+    accessKeyId: '<%= @aws_credentials.access_key_id %>',
+    secretAccessKey: '<%= @aws_credentials.secret_access_key %>',
+    sessionToken: '<%= @aws_credentials.session_token %>',
+    expireTime: '<%= @aws_credentials.expiration %>'
+  });
+
+  function createManagedUpload(file) {
+    var upload = new AWS.S3.ManagedUpload({
+      params: {
+        Bucket: '<%= @aws_bucket %>',
+        Key: file.name,
+        Body: file,
+        ContentType: file.type,
+        ACL: 'public-read'
+      }});
+
+    upload.on('httpUploadProgress', function (progress) {
+      $('#progress').width((progress.loaded / progress.total)*100 + "%");
+    });
+
+    return upload;
+  }
+
+  $(':button').on('click', function() {
+    var graphicInput = document.getElementById('graphic-file');
+    if (graphicInput.files.length <= 0) {
+      return;
+    }
+
+    var graphicUpload = createManagedUpload(graphicInput.files[0]);
+    graphicUpload.send(function(err, graphicData) {
+      $('#sermon_series_graphic_key').val(graphicData.key);
+      $('#uploadModal').modal('hide');
+      $('#new_sermon_series').submit();
+    });
+  });
+</script>
