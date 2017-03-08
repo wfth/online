@@ -56,7 +56,7 @@
     var upload = new AWS.S3.ManagedUpload({
       params: {
         Bucket: '<%= @aws_bucket %>',
-        Key: 'sermons/<%= @sermon.uuid %>/' + file.name,
+        Key: "sermon_series/<%= @sermon_series.uuid %>/sermons/<%= @sermon.uuid %>/" + file.name,
         Body: file,
         ContentType: file.type,
         ACL: 'public-read'

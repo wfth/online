@@ -1,7 +1,7 @@
 class SermonsController < ApplicationController
   def new
-    sermon_series = SermonSeries.find(params[:sermon_series_id])
-    @sermon = sermon_series.sermons.build(
+    @sermon_series = SermonSeries.find(params[:sermon_series_id])
+    @sermon = @sermon_series.sermons.build(
       title: "Your New Sermon",
       description: "Describe the sermon")
 

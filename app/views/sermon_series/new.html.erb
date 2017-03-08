@@ -35,6 +35,16 @@
 </div>
 
 <script type="text/javascript">
+  $(document).ready(function() {
+    // This has to be set up immediately because when it's in the
+    // upload's send callback, it is sometimes run after the modal has
+    // already sent shown.bs.modal.
+    $('#uploadModal').on('shown.bs.modal', function (e) {
+      $('#uploadModal').modal('hide');
+      $('#new_sermon_series').submit();
+    })
+  });
+
   AWS.config = new AWS.Config({
     region: '<%= Aws.config[:region] %>',
     accessKeyId: '<%= @aws_credentials.access_key_id %>',
@@ -47,7 +57,7 @@
     var upload = new AWS.S3.ManagedUpload({
       params: {
         Bucket: '<%= @aws_bucket %>',
-        Key: file.name,
+        Key: "sermon_series/<%= @sermon_series.uuid %>/" + file.name,
         Body: file,
         ContentType: file.type,
         ACL: 'public-read'
@@ -69,8 +79,6 @@
     var graphicUpload = createManagedUpload(graphicInput.files[0]);
     graphicUpload.send(function(err, graphicData) {
       $('#sermon_series_graphic_key').val(graphicData.key);
-      $('#uploadModal').modal('hide');
-      $('#new_sermon_series').submit();
     });
   });
 </script>
