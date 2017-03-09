@@ -1,0 +1,2 @@
+class ShopifyAccessKey < ApplicationRecord
+end
