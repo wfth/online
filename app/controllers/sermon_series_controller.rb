@@ -31,6 +31,6 @@ class SermonSeriesController < ApplicationController
   private
 
   def sermon_series_params
-    params.require(:sermon_series).permit(:title, :released_on, :description, :graphic_key)
+    params.require(:sermon_series).permit(:title, :released_on, :description, :graphic_key, :uuid)
   end
 end
