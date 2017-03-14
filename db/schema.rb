@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170308200531) do
+ActiveRecord::Schema.define(version: 20170307213459) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -35,13 +35,6 @@ ActiveRecord::Schema.define(version: 20170308200531) do
     t.string   "audio_key"
     t.string   "transcript_key"
     t.index ["sermon_series_id"], name: "index_sermons_on_sermon_series_id", using: :btree
-  end
-
-  create_table "shopify_access_keys", force: :cascade do |t|
-    t.string   "access_token"
-    t.string   "scopes"
-    t.datetime "created_at",   null: false
-    t.datetime "updated_at",   null: false
   end
 
 end

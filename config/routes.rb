@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  get 'shopify_access_keys/auth'
+  mount ShopifyApp::Engine, at: '/'
 
   resources :sermon_series do
     resources :sermons, shallow: true
